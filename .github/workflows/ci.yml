@@ -24,15 +24,15 @@ jobs:
           php-version: 8.2
           extensions: mbstring, bcmath, ctype, fileinfo, json, tokenizer, xml, pdo, pdo_mysql, openssl, curl, zip, imagick,
 
-      # Step 3: Copy Laravel.env file
+      # Step 3: Install Composer Depedencies
+      - name: Install Depedencies
+        run: composer install --no-interaction --prefer-dist -vvv
+
+      # Step 4: Copy Laravel.env file
       - name: Prepare Laravel environment
         run: |
           cp .env.example .env
           php artisan key:generate
-
-      # Step 4: Install Composer Depedencies
-      - name: Install Depedencies
-        run: composer install --no-interaction --prefer-dist -vvv
 
       # Step 5: Execute Laravel Test
       - name: Run Test Suite
