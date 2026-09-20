@@ -1,0 +1,40 @@
+name: New CI Workflow
+
+on:
+  push:
+    branches: ['dev', 'master']
+  
+  pull_request:
+    branches: ['dev']
+
+jobs:
+  laravel-tests:
+
+    runs-on:  ubuntu-latest
+
+    steps:
+      # Step 1: Download your laravel code onto the runner
+      - name: check out repository code
+        uses: actions/checkout@v4
+
+      # Step 2: set up php8.2 & composer on the runner
+      - name: Setup PHP environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, bcmath, ctype, fileinfo, json, tokenizer, xml, pdo, pdo_mysql, openssl, curl, zip, imagick,
+
+      # Step 3: Copy Laravel.env file
+      - name: Prepare Laravel environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # Step 4: Install Composer Depedencies
+      - name: Install Depedencies
+        run: composer install --no-interaction --prefer-dist -vvv
+
+      # Step 5: Execute Laravel Test
+      - name: Run Test Suite
+        run: php artisan test
+  
