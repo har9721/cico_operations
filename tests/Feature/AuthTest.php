@@ -14,6 +14,8 @@ class AuthTest extends TestCase
 
     public function test_user_can_login_with_correct_credentials(): void
     {
+        $this->withoutExceptionHandling();
+
         User::factory()->create([
             "email" => "harshal@yopmail.com",
             "password" => Hash::make('12345678')
@@ -29,6 +31,8 @@ class AuthTest extends TestCase
 
     public function test_user_can_login_with_incorrect_credentials() : void 
     {
+        $this->withoutExceptionHandling();
+
         User::factory()->create([
             "email" => "harshal21@yopmail.com",
             "password" => Hash::make('12345678')
