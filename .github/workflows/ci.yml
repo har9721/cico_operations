@@ -34,7 +34,11 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      # Step 5: Execute Laravel Test
+      # Step 5: Run the migrations
+      - name: Run migrations
+        run: php artisan test
+
+      # Step 6: Execute Laravel Test
       - name: Run Test Suite
         run: php artisan test
   
