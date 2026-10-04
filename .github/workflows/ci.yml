@@ -34,11 +34,21 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      # Step 5: Run the migrations
+      # Step 5: Generate JWT secret if you don't want to use GitHub Secret
+      - name: Generate JWT secret
+        run: php artisan jwt:secret --force
+
+      # Step 6. Clear Laravel configuration/cache
+      - name: Clear Laravel cache
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+
+      # Step 7: Run the migrations
       - name: Run migrations
         run: php artisan test
 
-      # Step 6: Execute Laravel Test
+      # Step 8: Execute Laravel Test
       - name: Run Test Suite
         run: php artisan test
   
