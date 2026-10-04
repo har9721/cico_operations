@@ -12,6 +12,27 @@ jobs:
 
     runs-on:  ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0    
+
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+          MYSQL_USER: testing_user
+          MYSQL_PASSWORD: testing_password
+
+        ports:
+          - 3306:3306
+
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testing
+      DB_USERNAME: testing_user
+      DB_PASSWORD: testing_password
+
     steps:
       # Step 1: Download your laravel code onto the runner
       - name: check out repository code
@@ -34,7 +55,21 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      # Step 5: Execute Laravel Test
+      # Step 5: Generate JWT secret if you don't want to use GitHub Secret
+      - name: Generate JWT secret
+        run: php artisan jwt:secret --force
+
+      # Step 6: Run the migrations
+      - name: Run migrations
+        run: php artisan migrate
+
+      # Step 7. Clear Laravel configuration/cache
+      - name: Clear Laravel cache
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+
+      # Step 8: Execute Laravel Test
       - name: Run Test Suite
         run: php artisan test
   
