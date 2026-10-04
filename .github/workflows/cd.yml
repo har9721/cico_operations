@@ -27,7 +27,7 @@ jobs:
             git pull origin master
 
             echo "Installing Composer Depedencies"
-            composer-install --no-dev --optimize-autoloader
+            composer install --no-dev --optimize-autoloader
 
             echo "Run database migrations"
             php artisan migrate --force
