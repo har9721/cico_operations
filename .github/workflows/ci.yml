@@ -59,15 +59,15 @@ jobs:
       - name: Generate JWT secret
         run: php artisan jwt:secret --force
 
-      # Step 6. Clear Laravel configuration/cache
+      # Step 6: Run the migrations
+      - name: Run migrations
+        run: php artisan migrate
+
+      # Step 7. Clear Laravel configuration/cache
       - name: Clear Laravel cache
         run: |
           php artisan config:clear
           php artisan cache:clear
-
-      # Step 7: Run the migrations
-      - name: Run migrations
-        run: php artisan test
 
       # Step 8: Execute Laravel Test
       - name: Run Test Suite
