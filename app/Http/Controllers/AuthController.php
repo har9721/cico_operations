@@ -44,7 +44,7 @@ class AuthController extends Controller
                     'token' => $token,
                     'data' => User::where('email', $credential['email'])->first(),
                     'token_type' => 'bearer',
-                    'expires_in' => auth()->factory()->getTTL() * 60,
+                    'expires_in' => JWTAuth::factory()->getTTL() * 60,
                 ], 200);
             }else{
                 return response()->json(['error' => 'Invalid credentials'], 401);
