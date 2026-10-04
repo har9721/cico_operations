@@ -12,6 +12,27 @@ jobs:
 
     runs-on:  ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0    
+
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+          MYSQL_USER: testing_user
+          MYSQL_PASSWORD: testing_password
+
+        ports:
+          - 3306:3306
+
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testing
+      DB_USERNAME: testing_user
+      DB_PASSWORD: testing_password
+
     steps:
       # Step 1: Download your laravel code onto the runner
       - name: check out repository code
