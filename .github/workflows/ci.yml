@@ -34,42 +34,68 @@ jobs:
       DB_PASSWORD: testing_password
 
     steps:
-      # Step 1: Download your laravel code onto the runner
+      # ------------------------
+      # Checkout code
+      # ------------------------
+
       - name: check out repository code
         uses: actions/checkout@v4
 
-      # Step 2: set up php8.2 & composer on the runner
+      # ------------------------
+      # Set up PHP & Extensions
+      # ------------------------
+
       - name: Setup PHP environment
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
-          extensions: mbstring, bcmath, ctype, fileinfo, json, tokenizer, xml, pdo, pdo_mysql, openssl, curl, zip, imagick,
+          extensions: mbstring, bcmath, ctype, fileinfo, json, tokenizer, xml, pdo, pdo_mysql, openssl, curl, zip, imagick
 
-      # Step 3: Install Composer Depedencies
+      # ------------------------
+      # Composer Install
+      # ------------------------
+
       - name: Install Depedencies
         run: composer install --no-interaction --prefer-dist -vvv
 
-      # Step 4: Copy Laravel.env file
+      # ------------------------
+      # Code Quality Checks
+      # ------------------------
+
+      - name: Run Laravel Pint
+        run: ./vendor/bin/pint --test
+
+      # ------------------------
+      # Laravel Environment Setup
+      # ------------------------
+
       - name: Prepare Laravel environment
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      # Step 5: Generate JWT secret if you don't want to use GitHub Secret
-      - name: Generate JWT secret
-        run: php artisan jwt:secret --force
-
-      # Step 6: Run the migrations
       - name: Run migrations
-        run: php artisan migrate
+        run: php artisan migrate:fresh --force
 
-      # Step 7. Clear Laravel configuration/cache
       - name: Clear Laravel cache
         run: |
           php artisan config:clear
           php artisan cache:clear
 
-      # Step 8: Execute Laravel Test
+      - name: Directory Permissions
+        run: chmod -R 775 storage bootstrap/cache
+
+      # ------------------------
+      # Generate JWT secret
+      # ------------------------
+
+      - name: Generate JWT secret
+        run: php artisan jwt:secret --force
+
+      # ------------------------
+      # Tests
+      # ------------------------
+
       - name: Run Test Suite
         run: php artisan test
   

@@ -13,30 +13,30 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credential = $request->only('email','password');
+        $credential = $request->only('email', 'password');
 
-        $validate = Validator::make($credential,[
+        $validate = Validator::make($credential, [
             'email' => [
                 'required',
-                'email'
+                'email',
             ],
             'password' => [
                 'required',
                 'string',
-                'min:6'
-            ]
+                'min:6',
+            ],
         ]);
 
         if ($validate->fails()) {
             return response()->json([
-                'errors' => $validate->errors()
+                'errors' => $validate->errors(),
             ], 422);
         }
 
-        try{
+        try {
             $verifiedUser = User::where('email', $credential['email'])->first();
 
-            if($verifiedUser && Hash::check($credential['password'], $verifiedUser->password)){
+            if ($verifiedUser && Hash::check($credential['password'], $verifiedUser->password)) {
                 $token = JWTAuth::fromUser($verifiedUser);
 
                 return response()->json([
@@ -46,10 +46,10 @@ class AuthController extends Controller
                     'token_type' => 'bearer',
                     'expires_in' => JWTAuth::factory()->getTTL() * 60,
                 ], 200);
-            }else{
+            } else {
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
-        }catch(JWTException $e){
+        } catch (JWTException $e) {
             return response()->json(['error' => $e->getMessage()], 401);
         }
     }
