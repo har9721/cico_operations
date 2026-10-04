@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -33,19 +34,24 @@ class AuthController extends Controller
         }
 
         try{
-            if(!$token = JWTAuth::attempt($credential))
-                return response()->json(['error' => 'Invalid credential'], 401);
+            $verifiedUser = User::where('email', $credential['email'])->first();
+
+            if($verifiedUser && Hash::check($credential['password'], $verifiedUser->password)){
+                $token = JWTAuth::fromUser($verifiedUser);
+
+                return response()->json([
+                    'status' => 'success',
+                    'token' => $token,
+                    'data' => User::where('email', $credential['email'])->first(),
+                    'token_type' => 'bearer',
+                    'expires_in' => auth()->factory()->getTTL() * 60,
+                ], 200);
+            }else{
+                return response()->json(['error' => 'Invalid credentials'], 401);
+            }
         }catch(JWTException $e){
             return response()->json(['error' => $e->getMessage()], 401);
         }
-
-        return response()->json([
-            'status' => 'success',
-            'token' => $token,
-            'data' => User::where('email', $credential['email'])->first(),
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-        ], 200);
     }
 
     public function logout()

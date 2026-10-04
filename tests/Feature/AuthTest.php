@@ -21,7 +21,7 @@ class AuthTest extends TestCase
             "password" => Hash::make('12345678')
         ]);
 
-        $response = $this->postJson('/api/login',[
+        $response = $this->postJson('/api/auth/login',[
             'email' => 'harshal@yopmail.com',
             'password' => '12345678'
         ]);
@@ -38,7 +38,7 @@ class AuthTest extends TestCase
             "password" => Hash::make('12345678')
         ]);
 
-        $response = $this->postJson('/api/login',[
+        $response = $this->postJson('/api/auth/login',[
             'email' => 'harshal2@yopmail.com',
             'password' => '12345678'
         ]);
