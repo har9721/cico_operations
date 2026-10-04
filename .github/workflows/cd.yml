@@ -39,6 +39,4 @@ jobs:
             php artisan route:cache
 
             echo "Deployment completed successfully.....!"
-
-            EOF
       
