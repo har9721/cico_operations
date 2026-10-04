@@ -1,0 +1,49 @@
+name: continuous Deployment to AWS EC2
+
+on: 
+  push:
+    branches: ['master']
+
+jobs: 
+  deploy:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master'
+ 
+    runs-on:  ubuntu-latest
+
+    steps:  
+      # ------------------------
+      # Connect to EC2 via SSH
+      # ------------------------
+    
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "navigate to project folder"
+            cd /var/www/html/cico_operations
+
+            echo "Pulling latest code...."
+            git pull origin master
+
+            echo "Installing Composer Depedencies"
+            composer-install --no-dev --optimize-autoloader
+
+            echo "Run database migrations"
+            php artisan migrate --force
+
+            echo "clear application cache"
+            php artisan optimize:clear
+
+            php artisan config:cache
+            php artisan route:cache
+
+            echo "Deployment completed successfully.....!"
+
+            EOF
+      

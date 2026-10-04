@@ -1,8 +1,8 @@
 name: Hello World Workflow
 
 on:
-  push:
-    branches: ['master','dev']
+  # push:
+  #   branches: ['master','dev']
 
 jobs:
   say-hello:
