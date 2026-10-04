@@ -61,5 +61,5 @@ class AuthController extends Controller
         } catch (JWTException $e) {
             return response()->json(['error' => 'Failed to logout, please try again'], 500);
         }
-    } 
+    }
 }
