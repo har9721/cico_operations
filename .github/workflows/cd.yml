@@ -2,7 +2,7 @@ name: continuous Deployment to AWS EC2
 
 on: 
   push:
-    branches: ['master']
+    branches: ['dev']
 
 jobs: 
   deploy:
